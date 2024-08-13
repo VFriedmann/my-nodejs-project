@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Manager</title>
+    
+    <style>
+        body {
+            background-color: #1a1a1a; /* Leicht hellerer Hintergrund für besseren Kontrast */
+            color: #e0e0e0; /* Hellerer Text für bessere Lesbarkeit */
+            font-family: 'Roboto', sans-serif; /* Modernere Schriftart */
+            line-height: 1.6; /* Besserer Lesefluss */
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            position: relative;
+            text-align: center;
+            color: white;
+            height: 20vh;
+        }
+
+        .header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .header h1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            margin: 0;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px #000000;
+            background-color: #474af8;
+        }
+
+        .section-title {
+            text-align:left;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+
+        .form-container {
+            background-color: #2c2c2c; /* Abgesetzte Farbe für Formulare */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Hinzufügen von Schatten für Tiefe */
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-container input, .form-container select, .form-container button {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .form-container button {
+            background-color: #6200ea;
+            color: white;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #3700b3;
+        }
+
+        .filter-container {
+            background-color: #2c2c2c; /* Abgesetzte Farbe für Filter */
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-container input, .filter-container select {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .tile-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 50%;
+        }
+
+        .tile {
+            background-color: #2c2c2c;
+            padding: 20px;
+            border-radius: 10px;
+            width: calc(50% - 20px);
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s forwards;
+            word-wrap: break-word;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Sanfte Animationen */
+        }
+
+        .tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .youtube-thumbnail {
+            width: 50%;
+            margin-bottom: 10px;
+        }
+
+        .tile h3, .tile p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .tile h3 {
+            font-size: 1.4rem; /* Größere Schriftgröße für Titel */
+        }
+
+        .tile p {
+            font-size: 1rem; /* Größe der Beschreibung */
+        }
+
+        .tile .description {
+            font-size: 1.2rem; /* Größe der Beschreibung */
+        }
+
+        .tile .link {
+            font-size: 1rem; /* Größe der Links */
+        }
+
+        .tile button {
+            background-color: #b00020;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            max-width: 100%;
+        }
+
+        .tile button.open-link {
+            background-color: #6200ea;
+        }
+
+        .tile button:hover {
+            background-color: #790000;
+        }
+
+        .tile button.open-link:hover {
+            background-color: #3700b3;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .category-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .category-container select {
+            flex: 1;
+        }
+
+        .form-button {
+            background-color: #6200ea;
+            color: white;
+            cursor: pointer;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .form-button:hover {
+            background-color: #3700b3;
+        }
+
+        /* Media Queries für responsives Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tile {
+                width: calc(100% - 20px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-container {
+                padding: 10px;
+            }
+
+            .filter-container {
+                padding: 10px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .tile {
+                padding: 10px;
+            }
+
+            .tile h3, .tile p {
+                font-size: 0.9rem;
+            }
+
+            .tile h3 {
+                font-size: 1rem;
+            }
+
+            .tile .description {
+                font-size: 1rem;
+            }
+
+            .tile .link {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://cdn.pixabay.com/photo/2018/01/29/13/03/internet-3116062_960_720.jpg" alt="Internet-Symbol mit globalem Netzwerk">
+            <h1>Friedl's Linklist</h1>
+        </div>
+        
+        <h2 class="section-title">Link Hinzufügen</h2>
+        <button id="toggleFormButton" class="form-button" onclick="toggleForm()">Link einfügen</button>
+        
+        <div class="form-container" id="formContainer" style="display:none;">
+            <input type="text" id="comment" placeholder="Kommentar eingeben" required>
+            <input type="url" id="link" placeholder="Link eingeben" required>
+            <div class="category-container">
+                <select id="category1">
+                    <option value="" disabled selected>Kategorie 1 auswählen</option>
+                    <option value="Sprache">Sprache</option>
+                    <option value="Tutorial">Tutorial</option>
+                    <option value="Blog">Blog</option>
+                </select>
+                <select id="category2">
+                    <option value="" disabled selected>Kategorie 2 auswählen</option>
+                    <option value="Technologie">Technologie</option>
+                    <option value="Reise">Reise</option>
+                    <option value="Essen&Trinken">Essen&Trinken</option>
+                </select>
+            </div>
+            <input type="date" id="date" required>
+            <button class="form-button" onclick="addLink()">Link hinzufügen</button>
+        </div>
+
+        <h2 class="section-title">Links filtern</h2>
+        <div class="filter-container">
+            <input type="text" id="searchComment" placeholder="Beschreibung suchen">
+            <select id="filterCategory1">
+                <option value="">Kategorie 1 filtern</option>
+                <option value="Sprache">Sprache</option>
+                <option value="Tutorial">Tutorial</option>
+                <option value="Blog">Blog</option>
+            </select>
+            <select id="filterCategory2">
+                <option value="">Kategorie 2 filtern</option>
+                <option value="Technologie">Technologie</option>
+                <option value="Reise">Reise</option>
+                <option value="Essen&Trinken">Essen&Trinken</option>
+            </select>
+            <input type="date" id="filterDate">
+            <button class="form-button" onclick="filterLinks()">Filtern</button>
+        </div>
+        
+        <h2 class="section-title">Links</h2>
+        <div id="linksContainer" class="tile-container"></div>
+    </div>
+
+    <script>
+        // Ruft gespeicherte Links aus dem localStorage ab oder gibt ein leeres Array zurück
+function getLinks() {
+    return JSON.parse(localStorage.getItem('links')) || [];
+}
+
+// Speichert Links im localStorage
+function saveLinks(links) {
+    localStorage.setItem('links', JSON.stringify(links));
+}
+
+// Funktion zum Hinzufügen eines Links
+function addLink() {
+    const comment = document.getElementById('comment').value;
+    const link = document.getElementById('link').value;
+    const category1 = document.getElementById('category1').value;
+    const category2 = document.getElementById('category2').value;
+    const date = document.getElementById('date').value;
+
+    // Prüfen, ob alle Felder ausgefüllt sind
+    if (!comment || !link || !category1 || !category2 || !date) {
+        alert("Bitte alle Felder ausfüllen!");
+        return;
+    }
+
+    const links = getLinks();
+    links.push({
+        comment,
+        link,
+        category1,
+        category2,
+        date,
+    });
+
+    saveLinks(links);
+    loadLinks();
+    toggleForm();
+}
+
+// Funktion zum Anzeigen der gespeicherten Links
+function loadLinks() {
+    const links = getLinks();
+    const linksContainer = document.getElementById('linksContainer');
+    linksContainer.innerHTML = '';
+
+    links.forEach((linkObj, index) => {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.innerHTML = `
+            <h3>${linkObj.comment}</h3>
+            <p class="description">Kategorie: ${linkObj.category1}, ${linkObj.category2}</p>
+            <p class="link">Link: <a href="${linkObj.link}" target="_blank" rel="noopener noreferrer">${linkObj.link}</a></p>
+            <p>Datum: ${linkObj.date}</p>
+            <button class="open-link" onclick="window.open('${linkObj.link}', '_blank')">Link öffnen</button>
+            <button onclick="deleteLink(${index})">Löschen</button>
+        `;
+        linksContainer.appendChild(tile);
+    });
+}
+
+// Funktion zum Löschen eines Links
+function deleteLink(index) {
+    if (!confirm("Möchten Sie diesen Link wirklich löschen?")) {
+        return; // Abbrechen, wenn der Benutzer nicht bestätigt
+    }
+    const links = getLinks();
+    links.splice(index, 1);
+    saveLinks(links);
+    loadLinks();
+}
+
+// Funktion zum Filtern der Links
+function filterLinks() {
+    const searchComment = document.getElementById('searchComment').value.toLowerCase();
+    const filterCategory1 = document.getElementById('filterCategory1').value;
+    const filterCategory2 = document.getElementById('filterCategory2').value;
+    const filterDate = document.getElementById('filterDate').value;
+    const links = getLinks();
+    const linksContainer = document.getElementById('linksContainer');
+    linksContainer.innerHTML = '';
+
+    const filteredLinks = links.filter(linkObj => {
+        return (
+            (!searchComment || linkObj.comment.toLowerCase().includes(searchComment)) &&
+            (!filterCategory1 || linkObj.category1 === filterCategory1) &&
+            (!filterCategory2 || linkObj.category2 === filterCategory2) &&
+            (!filterDate || linkObj.date === filterDate)
+        );
+    });
+
+    filteredLinks.forEach((linkObj, index) => {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.innerHTML = `
+            <h3>${linkObj.comment}</h3>
+            <p class="description">Kategorie: ${linkObj.category1}, ${linkObj.category2}</p>
+            <p class="link">Link: <a href="${linkObj.link}" target="_blank" rel="noopener noreferrer">${linkObj.link}</a></p>
+            <p>Datum: ${linkObj.date}</p>
+            <button class="open-link" onclick="window.open('${linkObj.link}', '_blank')">Link öffnen</button>
+            <button onclick="deleteLink(${index})">Löschen</button>
+        `;
+        linksContainer.appendChild(tile);
+    });
+}
+
+// Funktion zum Ein- und Ausblenden des Formulars
+function toggleForm() {
+    const formContainer = document.getElementById('formContainer');
+    const toggleFormButton = document.getElementById('toggleFormButton');
+    const isVisible = formContainer.style.display === 'block';
+    formContainer.style.display = isVisible ? 'none' : 'block';
+    toggleFormButton.textContent = isVisible ? 'Link einfügen' : 'Link einfügen schließen';
+    if (!isVisible) {
+        formContainer.querySelector('input').focus(); // Fokus auf das erste Eingabefeld setzen
+    }
+}
+
+// Initiales Laden der Links
+loadLinks();
+
+    </script>
+</body>
+</html>
